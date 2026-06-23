@@ -1,0 +1,59 @@
+# Full vLLM server description for Synthra.
+# Load with:  synthra.load_server("examples/vllm.yaml")
+#
+# `backend` selects the engine. Every other key maps to a `vllm serve` flag.
+# Anything not modelled here can still be passed via `extra_args`.
+
+backend: vllm
+
+# --- model -----------------------------------------------------------------
+model: Qwen/Qwen2.5-0.5B-Instruct
+# served_model_name: qwen          # name clients use; defaults to `model`
+host: 127.0.0.1
+port: 8000
+
+# --- weights / precision ---------------------------------------------------
+dtype: auto                        # auto | bfloat16 | float16 | float32 | half
+# quantization: awq                # awq | gptq | fp8 | ...
+kv_cache_dtype: auto               # fp8 ~doubles KV-cache capacity (more concurrency)
+max_model_len: 8192                # context length; omit to let vLLM infer
+tokenizer_mode: auto
+trust_remote_code: false
+# download_dir: /data/hf-cache
+
+# --- parallelism -----------------------------------------------------------
+tensor_parallel_size: 1            # GPUs per layer shard
+pipeline_parallel_size: 1          # stages (multi-node)
+
+# --- throughput / memory ---------------------------------------------------
+gpu_memory_utilization: 0.90       # higher -> bigger KV cache -> more concurrency
+# cpu_offload_gb: 0                # GiB of weights to offload to CPU RAM (fits bigger models, slower)
+# block_size: 16                   # 1 | 8 | 16 | 32 | 64 | 128
+max_num_seqs: 256                  # batch width: concurrent sequences per step
+max_num_batched_tokens: 8192       # tokens per step; keep >= max_model_len
+enable_prefix_caching: true        # huge win when samples share a system/few-shot prefix
+enable_chunked_prefill: true       # interleave long prefills with decode (smoother latency)
+enforce_eager: false               # true disables CUDA graphs (debug / save memory)
+
+# --- reproducibility -------------------------------------------------------
+seed: 0                            # set for reproducible synthetic data
+
+# --- logprobs (important for the library) ----------------------------------
+# Server-side cap. The library requests top_logprobs per call up to this many;
+# raise it to capture a denser distribution for scoring / filtering / distillation.
+max_logprobs: 20
+
+# --- tool / function calling -----------------------------------------------
+enable_auto_tool_choice: true
+tool_call_parser: hermes           # match the model: hermes | llama3_json | mistral | qwen3_coder | ...
+
+# --- reasoning models (optional) -------------------------------------------
+# reasoning_parser: qwen3          # deepseek_r1 | qwen3 | glm45 | granite | mistral | ...
+
+# --- logging / lifecycle ---------------------------------------------------
+enable_log_requests: false
+startup_timeout: 600               # seconds to wait for /health (model load can be slow)
+
+# --- raw passthrough -------------------------------------------------------
+# extra_args: ["--structured-outputs-config", '{"backend":"xgrammar"}']
+extra_args: []
