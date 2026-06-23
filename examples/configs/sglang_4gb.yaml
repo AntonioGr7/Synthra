@@ -1,0 +1,28 @@
+# Minimal SGLang config tuned for a ~4 GB GPU (e.g. RTX 2050).
+# Smoke-test only: small model, short context.
+# Load with:  synthra.load_server("examples/configs/sglang_4gb.yaml")
+#
+# This is the SGLang twin of vllm_4gb.yaml: same model, same OpenAI-compatible
+# API, so a workflow stage can switch engines by pointing `server=` at this file
+# instead. Only the `backend` key and a few engine-native knob names differ.
+
+backend: sglang
+
+model: Qwen/Qwen2.5-0.5B-Instruct
+host: 127.0.0.1
+port: 8000
+
+dtype: bfloat16
+context_length: 2048               # SGLang's name for max_model_len
+
+# Fit in ~4 GB
+mem_fraction_static: 0.70          # SGLang's analogue of gpu_memory_utilization
+max_running_requests: 8            # SGLang's analogue of max_num_seqs
+disable_radix_cache: true          # turn prefix caching off for the smoke test
+
+seed: 0
+
+# Give the (slow, first-time) weight download room to finish.
+startup_timeout: 900
+
+extra_args: []

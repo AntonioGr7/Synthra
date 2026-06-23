@@ -17,7 +17,7 @@ from synthra import Workflow
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 
-SERVER = "examples/vllm_4gb.yaml"   # one server, reused by every stage
+SERVER = "examples/configs/vllm_4gb.yaml"   # one server, reused by every stage
 
 QUESTIONS = [
     {"id": "q1", "question": "How do I keep a Python list sorted as I insert items?"},

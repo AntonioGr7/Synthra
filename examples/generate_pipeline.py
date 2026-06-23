@@ -25,7 +25,7 @@ TOPICS = [
     {"id": "watch", "product": "a smartwatch"},
 ]
 
-with load_server("examples/vllm_4gb.yaml") as server:
+with load_server("examples/configs/vllm_4gb.yaml") as server:
     client = OpenAI(base_url=server.base_url, api_key="not-needed")
 
     def generate_review(item):

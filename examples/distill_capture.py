@@ -29,7 +29,7 @@ PROMPTS = [
     ])
 ]
 
-with load_server("examples/vllm_distill.yaml") as server:
+with load_server("examples/configs/vllm_distill.yaml") as server:
     client = OpenAI(base_url=server.base_url, api_key="not-needed")
     teacher = TeacherLogprobs(client, MODEL, top_k=20)
 

@@ -18,11 +18,13 @@ import os
 import yaml
 
 from .base import BackendServer, ServerConfig
+from .sglang import SGLangConfig, SGLangServer
 from .vllm import VLLMConfig, VLLMServer
 
 # name -> (config class, server class)
 BACKEND_REGISTRY: dict[str, tuple[type[ServerConfig], type[BackendServer]]] = {
     "vllm": (VLLMConfig, VLLMServer),
+    "sglang": (SGLangConfig, SGLangServer),
 }
 
 

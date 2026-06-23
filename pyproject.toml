@@ -11,9 +11,13 @@ dependencies = [
     "pyyaml>=6.0",
 ]
 
+[project.scripts]
+synthra = "synthra.cli:main"
+
 [project.optional-dependencies]
 # Heavy inference backends are opt-in: `uv pip install -e '.[vllm]'`.
 vllm = ["vllm>=0.23.0"]
+sglang = ["sglang>=0.4.0"]
 # Teacher-logprob capture for off-policy distillation.
 distill = ["numpy>=1.24", "safetensors>=0.4"]
 
